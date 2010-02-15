@@ -7,6 +7,7 @@
 // 		baud_freq = 16*baud_rate / gcd(global_clock_freq, 16*baud_rate)
 // second register:
 // 		baud_limit = (global_clock_freq / gcd(global_clock_freq, 16*baud_rate)) - baud_freq 
+//
 //---------------------------------------------------------------------------------------
 
 module baud_gen 
