@@ -26,12 +26,12 @@ output			int_read;		// read control to register file
 input	[7:0]	int_rd_data;	// data read from register file 
 
 // baud rate configuration, see baud_gen.v for more details.
-// baud rate generator parameters for 115200 baud on 44MHz clock 
-`define D_BAUD_FREQ			12'd23
-`define D_BAUD_LIMIT		16'd527
 // baud rate generator parameters for 115200 baud on 40MHz clock 
-//`define D_BAUD_FREQ			12'h90
-//`define D_BAUD_LIMIT		16'h0ba5
+`define D_BAUD_FREQ			12'h90
+`define D_BAUD_LIMIT		16'h0ba5
+// baud rate generator parameters for 115200 baud on 44MHz clock 
+// `define D_BAUD_FREQ			12'd23
+// `define D_BAUD_LIMIT		16'd527
 // baud rate generator parameters for 9600 baud on 66MHz clock 
 //`define D_BAUD_FREQ		12'h10
 //`define D_BAUD_LIMIT		16'h1ACB

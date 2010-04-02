@@ -10,9 +10,6 @@ module test;
 // include uart tasks 
 `include "uart_tasks.v" 
 
-// define if simulation should be binary or ascii 
-parameter BINARY_MODE = 1;
-
 // internal signal  
 reg clock;		// global clock 
 reg reset;		// global reset 
@@ -46,92 +43,49 @@ end
 //------------------------------------------------------------------
 // test bench transmitter and receiver 
 // uart transmit - test bench control 
-integer file;		// file handler index 
-integer char;		// character read from file 
-integer file_len;	// length of binary simulation file 
-integer byte_idx;	// byte index in binary mode simulation 
-integer tx_len;
-integer rx_len;
-reg new_rx_data;
 
 initial 
 begin 
 	// defualt value of serial output 
 	serial_out = 1;
 
-	// check simulation mode 
-	if (BINARY_MODE > 0)
-	begin 
-		// binary mode simulation 
-		$display("Starting binary mode simulation");
-		// open binary command file 
-		file=$fopen("test.bin", "r"); 
-		// in binary simulation mode the first two byte contain the file length (MSB first) 
-		char = $fgetc(file);
-		$display("char = %d", char);
-		file_len = char;
-		char = $fgetc(file);
-		$display("char = %d", char);
-		file_len = 256*file_len + char;
-		$display("File length: %d", file_len);
-		
-		// send entire file to uart 
-		byte_idx = 0;
-		while (byte_idx < file_len)
-		begin 
-			// each "record" in the binary starts with two bytes: the first is the number 
-			// of bytes to transmit and the second is the number of received bytes to wait 
-			// for before transmitting the next command. 
-			tx_len = $fgetc(file);
-			rx_len = $fgetc(file);
-			$display("Executing command with %d tx bytes and %d rx bytes", tx_len, rx_len);
-			byte_idx = byte_idx + 2;
-			
-			// transmit command 
-			while (tx_len > 0)
-			begin 
-				// read next byte from file and transmit it 
-				char = $fgetc(file);
-				byte_idx = byte_idx + 1;
-				send_serial(char, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0); 
-				// update tx_len 
-				tx_len = tx_len - 1;
-			end 
-			
-			// wait for received bytes 
-			while (rx_len > 0)
-			begin 
-				// one clock delay to allow new_rx_data to update 
-				@(posedge new_rx_data) rx_len = rx_len - 1;
-				// check if a new byte was received 
-// 				if (new_rx_data)
-// 					rx_len = rx_len - 1;
-			end 
-			
-			$display("Command finished");
-		end 
-	end 
-	else 
-	begin 
-		// ascii mode simulation 
-		// open UART command file 
-		file=$fopen("test.txt", "r"); 
-		// transmit the byte in the command file one by one 
-		char = $fgetc(file);
-		while (char >= 0) begin 
-			// transmit byte through UART 
-			send_serial(char, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0); 
-			#200000;
-			// read next byte from file 
-			char = $fgetc(file);
-		end 
-	end 
-	
-	// close input file 
-	$fclose(file);
-	
+	// transmit a write command to internal register file 
+	// command string: "w 4cd9 1a" + CR 
+	send_serial (8'h77, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0); 
+	#100;
+	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h34, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h63, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h64, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h39, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h31, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h61, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h0d, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	// transmit a read command from register file 
+	// command string: "r 1a" + CR 
+	send_serial (8'h72, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0); 
+	#100;
+	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h31, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h61, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+	send_serial (8'h0d, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
+	#100;
+
 	// delay and finish 
-	#500000;
+	#900000;
 	$finish;
 end 
 
@@ -147,9 +101,6 @@ end
 // serial sniffer loop 
 always 
 begin 
-	// clear new_rx_data flag 
-	new_rx_data = 0;
-	
 	// call serial sniffer 
 	get_serial(`BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8);
 	
@@ -162,10 +113,6 @@ begin
 			$display("received byte 0x%h (\"%c\") at %t ns", get_serial_data, get_serial_data, $time);
 		else 
 			$display("received byte 0x%h (\"%c\") at %t ns", get_serial_data, 8'hb0, $time);
-		
-		// sign to transmit process that a new byte was received 
-		@(posedge clock) new_rx_data = 1;
-		@(posedge clock) new_rx_data = 0;
 	end 
 	
 	// false start error 
@@ -184,7 +131,7 @@ end
 //------------------------------------------------------------------
 // device under test 
 // DUT interface 
-wire	[7:0]	int_address;	// address bus to register file 
+wire	[15:0]	int_address;	// address bus to register file 
 wire	[7:0]	int_wr_data;	// write data to register file 
 wire			int_write;		// write control to register file 
 wire			int_read;		// read control to register file 
@@ -195,10 +142,15 @@ wire			ser_out;		// DUT serial output
 // DUT instance 
 uart2bus_top uart2bus1
 (
-	.clock(clock), .reset(reset),
-	.ser_in(ser_in), .ser_out(ser_out),
-	.int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write),
-	.int_rd_data(int_rd_data), .int_read(int_read)
+	.clock(clock), 
+	.reset(reset),
+	.ser_in(ser_in), 
+	.ser_out(ser_out),
+	.int_address(int_address), 
+	.int_wr_data(int_wr_data), 
+	.int_write(int_write),
+	.int_rd_data(int_rd_data), 
+	.int_read(int_read)
 );
 
 // serial interface to test bench 
@@ -209,7 +161,7 @@ always @ (posedge clock) serial_in = ser_out;
 reg_file_model reg_file1 
 (
 	.clock(clock), .reset(reset),
-	.int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write),
+	.int_address(int_address[7:0]), .int_wr_data(int_wr_data), .int_write(int_write),
 	.int_rd_data(int_rd_data), .int_read(int_read)
 );
 
