@@ -21,7 +21,7 @@ endfunction
 
 // request the required clock rate and baud rate parameters 
 dig_labels = ["Clock Frequency in MHz"; "UART Baud Rate in bps"];
-default_val = ["40", "115200"];
+default_val = ["40"; "115200"];
 params = evstr(x_mdialog("Enter Core Parameters", dig_labels, default_val));
 
 // extract the parameters 
@@ -46,4 +46,4 @@ mes_str = ["Calculated core baud rate generator parameters:"; ...
            "`define D_BAUD_FREQ  12''d"+string(D_BAUD_FREQ); ...
            "`define D_BAUD_LIMIT 16''d"+string(D_BAUD_LIMIT);
            ];
-x_message_modeless(mes_str);
+messagebox(mes_str);
