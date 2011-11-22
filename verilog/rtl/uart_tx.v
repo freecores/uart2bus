@@ -51,7 +51,7 @@ begin
 		tx_busy <= 1'b0;
 	else if (~tx_busy & new_tx_data)
 		tx_busy <= 1'b1;
-	else if (tx_busy & (bit_count == 4'ha) & ce_1)
+	else if (tx_busy & (bit_count == 4'h9) & ce_1)
 		tx_busy <= 1'b0;
 end 
 

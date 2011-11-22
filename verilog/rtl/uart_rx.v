@@ -69,7 +69,7 @@ begin
 		rx_busy <= 1'b0;
 	else if (~rx_busy & ce_1_mid)
 		rx_busy <= 1'b1;
-	else if (rx_busy & (bit_count == 4'h9) & ce_1) 
+	else if (rx_busy & (bit_count == 4'h8) & ce_1_mid) 
 		rx_busy <= 1'b0;
 end 
 
