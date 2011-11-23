@@ -46,7 +46,7 @@ architecture Behavioral of uartTx is
       elsif (rising_edge(clk)) then
         if ((iTxBusy = '0') and (newTxData = '1')) then
           iTxBusy <= '1';
-        elsif ((iTxBusy = '1') and (bitCount = "1010") and (ce1 = '1')) then
+        elsif ((iTxBusy = '1') and (bitCount = "1001") and (ce1 = '1')) then
           iTxBusy <= '0';
         end if;
       end if;

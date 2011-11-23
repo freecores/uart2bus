@@ -60,7 +60,7 @@ architecture Behavioral of uartRx is
       elsif (rising_edge(clk)) then
         if ((rxBusy = '0') and (ce1Mid = '1')) then
           rxBusy <= '1';
-        elsif ((rxBusy = '1') and (bitCount = "1001") and (ce1 = '1')) then
+        elsif ((rxBusy = '1') and (bitCount = "1000") and (ce1 = '1')) then
           rxBusy <= '0';
         end if;
       end if;
