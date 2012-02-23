@@ -9,9 +9,9 @@
 --              baud_limit = (global_clock_freq / gcd(global_clock_freq, 16*baud_rate)) - baud_freq 
 --
 -----------------------------------------------------------------------------------------
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
 
 entity baudGen is
   port ( clr       : in  std_logic;                     -- global reset input

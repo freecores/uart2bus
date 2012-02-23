@@ -2,9 +2,9 @@
 -- uart parser module  
 --
 -----------------------------------------------------------------------------------------
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
+library ieee;
+use ieee.std_logic_1164.ALL;
+use ieee.std_logic_unsigned.ALL;
 
 entity uartParser is
   generic ( -- parameters 
@@ -19,6 +19,8 @@ entity uartParser is
          txData     : out std_logic_vector(7 downto 0);      -- data byte to transmit
          newTxData  : out std_logic;                         -- asserted to indicate that there is a new data byte for transmission
 	 -- internal bus to register file 
+         intReq     : out std_logic;                         -- 
+         intGnt     : in  std_logic;                         -- 
          intRdData  : in  std_logic_vector(7 downto 0);      -- data read from register file
          intAddress : out std_logic_vector(AW - 1 downto 0); -- address bus to register file
          intWrData  : out std_logic_vector(7 downto 0);      -- write data to register file
@@ -105,10 +107,12 @@ architecture Behavioral of uartParser is
   signal   addrNibble     : std_logic_vector(3 downto 0);       -- data nibble from received character
   signal   binByteCount   : std_logic_vector(7 downto 0);       -- binary mode byte counter
   signal   iIntAddress    : std_logic_vector(intAddress'range); -- 
+  signal   iWriteReq      : std_logic;                          -- 
   signal   iIntWrite      : std_logic;                          -- 
   signal   readDone       : std_logic;                          -- internally generated read done flag
   signal   readDoneS      : std_logic;                          -- sampled read done
   signal   readDataS      : std_logic_vector(7 downto 0);       -- sampled read data
+  signal   iReadReq       : std_logic;                          -- 
   signal   iIntRead       : std_logic;                          -- 
   signal   txChar         : std_logic_vector(7 downto 0);       -- transmit byte from nibble to character conversion
   signal   sTxBusy        : std_logic;                          -- sampled tx_busy for falling edge detection
@@ -356,29 +360,37 @@ architecture Behavioral of uartParser is
     process (clr, clk)
     begin
       if (clr = '1') then
+        iReadReq <= '0';
         iIntRead <= '0';
+        iWriteReq <= '0';
         iIntWrite <= '0';
         intWrData <= (others => '0');
       elsif (rising_edge(clk)) then
         if ((mainSm = mainAddr) and (writeOp = '1') and (newRxData = '1') and (dataInHexRange = '0')) then
-          iIntWrite <= '1';
+          iWriteReq <= '1';
           intWrData <= dataParam;
         -- binary extension mode
         elsif ((mainSm = mainBinData) and (binWriteOp = '1') and (newRxData = '1')) then
-          iIntWrite <= '1';
+          iWriteReq <= '1';
           intWrData <= rxData;
+        elsif ((intGnt = '1') and (iWriteReq = '1')) then
+          iWriteReq <= '0';
+          iIntWrite <= '1';
         else
           iIntWrite <= '0';
         end if;
         if ((mainSm = mainAddr) and (readOp = '1') and (newRxData = '1') and (dataInHexRange = '0')) then
-          iIntRead <= '1';
+          iReadReq <= '1';
         -- binary extension
         elsif ((mainSm = mainBinLen) and (binReadOp = '1') and (newRxData = '1')) then
           -- the first read request is issued on reception of the length byte
-          iIntRead <= '1';
+          iReadReq <= '1';
         elsif ((binReadOp = '1') and (txEndP = '1') and (binLastByte = '0')) then
           -- the next read requests are issued after the previous read value was transmitted and
           -- this is not the last byte to be read.
+          iReadReq <= '1';
+        elsif ((intGnt = '1') and (iReadReq = '1')) then
+          iReadReq <= '0';
           iIntRead <= '1';
         else
           iIntRead <= '0';
@@ -559,4 +571,6 @@ architecture Behavioral of uartParser is
     intAddress <= iIntAddress;
     intWrite <= iIntWrite;
     intRead <= iIntRead;
+    intReq <= '1' when (iReadReq = '1') else
+              '1' when (iWriteReq = '1') else '0';
   end Behavioral;

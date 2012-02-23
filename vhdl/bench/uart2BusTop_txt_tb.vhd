@@ -3,11 +3,16 @@
 --
 -----------------------------------------------------------------------------------------
 use std.textio.all;
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 use ieee.numeric_std.all;
 use ieee.std_logic_textio.all;
+
+library work;
+use work.uart2BusTop_pkg.all;
+use work.helpers_pkg.all;
 
 -----------------------------------------------------------------------------------------
 -- test bench implementation 
@@ -50,37 +55,6 @@ architecture behavior of uart2BusTop_txt_tb is
       wait for stopbit * bitTime;
     end procedure;
 
-  component uart2BusTop
-    generic
-    (
-      AW : integer := 8
-    );
-    port
-    (
-      clr        : in  std_logic;
-      clk        : in  std_logic;
-      serIn      : in  std_logic;
-      serOut     : out std_logic;
-      intRdData  : in  std_logic_vector(7 downto 0);
-      intAddress : out std_logic_vector(7 downto 0);
-      intWrData  : out std_logic_vector(7 downto 0);
-      intWrite   : out std_logic;
-      intRead    : out std_logic
-    );
-  end component;
-
-  component regFileModel
-    port
-    (
-      clr        : in  std_logic;
-      clk        : in  std_logic;
-      intAddress : in  std_logic_vector(7 downto 0);
-      intWrData  : in  std_logic_vector(7 downto 0);
-      intWrite   : in  std_logic;
-      intRead    : in  std_logic;
-      intRdData  : out std_logic_vector(7 downto 0));
-  end component;
-
   -- Inputs
   signal clr            : std_logic := '0';
   signal clk            : std_logic := '0';
@@ -95,6 +69,9 @@ architecture behavior of uart2BusTop_txt_tb is
   signal intRead        : std_logic;
   signal recvData       : std_logic_vector(7 downto 0);
   signal newRxData      : std_logic;
+  signal intAccessReq   : std_logic;
+  signal intAccessGnt   : std_logic;
+  signal counter        : integer;
   
   constant BAUD_115200  : real := 115200.0;
   constant BAUD_38400   : real := 38400.0;
@@ -127,6 +104,8 @@ architecture behavior of uart2BusTop_txt_tb is
         clk => clk,
         serIn => serIn,
         serOut => serOut,
+        intAccessReq => intAccessReq,
+        intAccessGnt => intAccessGnt,
         intRdData => intRdData,
         intAddress => intAddress,
         intWrData => intWrData,
@@ -144,6 +123,27 @@ architecture behavior of uart2BusTop_txt_tb is
       intWrData => intWrData,
       intWrite => intWrite,
       intRead => intRead);
+
+    -- just to create a delay similar to simulate a bus arbitrer
+    process (clr, clk)
+    begin
+      if (clr = '1') then
+        intAccessGnt <= '0';
+        counter <= 0;
+      elsif (rising_edge(clk)) then
+        if (counter = 0) then
+          if ((intAccessReq = '1') and (intAccessGnt = '0')) then
+            counter <= 500;
+          end if;
+          intAccessGnt <= '0';
+        elsif (counter = 1) then
+          counter <= counter - 1;
+          intAccessGnt <= '1';
+        else
+          counter <= counter - 1;
+        end if;
+      end if;
+    end process;
 
     -- clock generator - 25MHz clock 
     process
@@ -184,9 +184,10 @@ architecture behavior of uart2BusTop_txt_tb is
     process
 
       type     dataFile is file of character;
-      file     testTextFile : dataFile open READ_MODE is "test.txt";
+      file     testTextFile : dataFile open READ_MODE is "../test.txt";
       variable charBuf      : character;
       variable data         : integer;
+      variable tempLine     : line;
 
     begin
 	  -- default value of serial output 

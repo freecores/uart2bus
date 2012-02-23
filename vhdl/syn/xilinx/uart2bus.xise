@@ -27,6 +27,10 @@
       <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
     </file>
+    <file xil_pn:name="../../rtl/uartRx.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation"/>
+      <association xil_pn:name="Implementation"/>
+    </file>
     <file xil_pn:name="../../rtl/uartTx.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
@@ -35,27 +39,9 @@
       <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
     </file>
-    <file xil_pn:name="../../rtl/uartRx.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="../../rtl/uart2BusTop_pkg.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
-    </file>
-    <file xil_pn:name="../../bench/regFileModel.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation"/>
-      <association xil_pn:name="PostMapSimulation"/>
-      <association xil_pn:name="PostRouteSimulation"/>
-      <association xil_pn:name="PostTranslateSimulation"/>
-    </file>
-    <file xil_pn:name="../../bench/uart2BusTop_bin_tb.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation"/>
-      <association xil_pn:name="PostMapSimulation"/>
-      <association xil_pn:name="PostRouteSimulation"/>
-      <association xil_pn:name="PostTranslateSimulation"/>
-    </file>
-    <file xil_pn:name="../../bench/uart2BusTop_txt_tb.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation"/>
-      <association xil_pn:name="PostMapSimulation"/>
-      <association xil_pn:name="PostRouteSimulation"/>
-      <association xil_pn:name="PostTranslateSimulation"/>
     </file>
   </files>
 
@@ -80,8 +66,8 @@
     <property xil_pn:name="CLB Pack Factor Percentage" xil_pn:value="100" xil_pn:valueState="default"/>
     <property xil_pn:name="Case" xil_pn:value="Maintain" xil_pn:valueState="default"/>
     <property xil_pn:name="Case Implementation Style" xil_pn:value="None" xil_pn:valueState="default"/>
-    <property xil_pn:name="Change Device Speed To" xil_pn:value="-5" xil_pn:valueState="default"/>
-    <property xil_pn:name="Change Device Speed To Post Trace" xil_pn:value="-5" xil_pn:valueState="default"/>
+    <property xil_pn:name="Change Device Speed To" xil_pn:value="-4" xil_pn:valueState="default"/>
+    <property xil_pn:name="Change Device Speed To Post Trace" xil_pn:value="-4" xil_pn:valueState="default"/>
     <property xil_pn:name="Combinatorial Logic Optimization" xil_pn:value="false" xil_pn:valueState="default"/>
     <property xil_pn:name="Command line syntax" xil_pn:value="" xil_pn:valueState="default"/>
     <property xil_pn:name="Compile EDK Simulation Library" xil_pn:value="false" xil_pn:valueState="default"/>
@@ -123,7 +109,7 @@
     <property xil_pn:name="Delay Values To Be Read from SDF ModelSim" xil_pn:value="Setup Time" xil_pn:valueState="default"/>
     <property xil_pn:name="Device" xil_pn:value="xc3s200" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Device Family" xil_pn:value="Spartan3" xil_pn:valueState="non-default"/>
-    <property xil_pn:name="Device Speed Grade/Select ABS Minimum" xil_pn:value="-5" xil_pn:valueState="default"/>
+    <property xil_pn:name="Device Speed Grade/Select ABS Minimum" xil_pn:value="-4" xil_pn:valueState="default"/>
     <property xil_pn:name="Display Incremental Messages" xil_pn:value="false" xil_pn:valueState="default"/>
     <property xil_pn:name="Do Not Escape Signal and Instance Names in Netlist" xil_pn:value="false" xil_pn:valueState="default"/>
     <property xil_pn:name="Done (Output Events)" xil_pn:value="Default (4)" xil_pn:valueState="default"/>
@@ -142,7 +128,7 @@
     <property xil_pn:name="Extra Effort" xil_pn:value="None" xil_pn:valueState="default"/>
     <property xil_pn:name="Extra Effort (Highest PAR level only)" xil_pn:value="None" xil_pn:valueState="default"/>
     <property xil_pn:name="FPGA Start-Up Clock" xil_pn:value="CCLK" xil_pn:valueState="default"/>
-    <property xil_pn:name="FSM Encoding Algorithm" xil_pn:value="User" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="FSM Encoding Algorithm" xil_pn:value="Auto" xil_pn:valueState="default"/>
     <property xil_pn:name="FSM Style" xil_pn:value="LUT" xil_pn:valueState="default"/>
     <property xil_pn:name="Filter Files From Compile Order" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Fitter Report Format" xil_pn:value="HTML" xil_pn:valueState="non-default"/>
@@ -241,7 +227,7 @@
     <property xil_pn:name="Overwrite Compiled Libraries" xil_pn:value="false" xil_pn:valueState="default"/>
     <property xil_pn:name="Pack I/O Registers into IOBs" xil_pn:value="Auto" xil_pn:valueState="default"/>
     <property xil_pn:name="Pack I/O Registers/Latches into IOBs" xil_pn:value="Off" xil_pn:valueState="default"/>
-    <property xil_pn:name="Package" xil_pn:value="ft256" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="Package" xil_pn:value="tq144" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Path Used in sdf_annotate task" xil_pn:value="Default" xil_pn:valueState="default"/>
     <property xil_pn:name="Path(s) to Previously Compiled EDK Libraries" xil_pn:value="Search in Path" xil_pn:valueState="default"/>
     <property xil_pn:name="Perform Advanced Analysis" xil_pn:value="false" xil_pn:valueState="default"/>
@@ -298,7 +284,6 @@
     <property xil_pn:name="SDK Export Directory" xil_pn:value="SDK_Export" xil_pn:valueState="default"/>
     <property xil_pn:name="Safe Implementation" xil_pn:value="No" xil_pn:valueState="default"/>
     <property xil_pn:name="Security" xil_pn:value="Enable Readback and Reconfiguration" xil_pn:valueState="default"/>
-    <property xil_pn:name="Selected Simulation Root Source Node Behavioral" xil_pn:value="Architecture|uart2BusTop_bin_tb|behavior" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Selected Simulation Source Node" xil_pn:value="UUT" xil_pn:valueState="default"/>
     <property xil_pn:name="Setting Output File" xil_pn:value="" xil_pn:valueState="default"/>
     <property xil_pn:name="Shift Register Extraction" xil_pn:value="true" xil_pn:valueState="default"/>
@@ -314,7 +299,7 @@
     <property xil_pn:name="Smart Guide File Name" xil_pn:value="uart2BusTop_guide.ncd" xil_pn:valueState="default"/>
     <property xil_pn:name="Source window" xil_pn:value="false" xil_pn:valueState="default"/>
     <property xil_pn:name="Specify Source Libraries Path" xil_pn:value="Search in Path" xil_pn:valueState="default"/>
-    <property xil_pn:name="Speed Grade" xil_pn:value="-5" xil_pn:valueState="default"/>
+    <property xil_pn:name="Speed Grade" xil_pn:value="-4" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Stamp Timing Model Filename" xil_pn:value="" xil_pn:valueState="default"/>
     <property xil_pn:name="Starting Placer Cost Table (1-100) Map" xil_pn:value="1" xil_pn:valueState="default"/>
     <property xil_pn:name="Starting Placer Cost Table (1-100) Par" xil_pn:value="1" xil_pn:valueState="default"/>
@@ -356,14 +341,14 @@
     <property xil_pn:name="Wait for DLL Lock (Output Events)" xil_pn:value="Default (NoWait)" xil_pn:valueState="default"/>
     <property xil_pn:name="Wave window" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="Work Directory" xil_pn:value="xst" xil_pn:valueState="default"/>
-    <property xil_pn:name="Working Directory" xil_pn:value="D:/design/uart2bus" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="Working Directory" xil_pn:value="D:/design/uart2bus/syn/xilinx" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Write Timing Constraints" xil_pn:value="false" xil_pn:valueState="default"/>
     <property xil_pn:name="XOR Collapsing" xil_pn:value="true" xil_pn:valueState="default"/>
     <property xil_pn:name="iMPACT Project File" xil_pn:value="Default" xil_pn:valueState="default"/>
     <!--                                                                                  -->
     <!-- The following properties are for internal use only. These should not be modified.-->
     <!--                                                                                  -->
-    <property xil_pn:name="PROP_BehavioralSimTop" xil_pn:value="Architecture|uart2BusTop_bin_tb|behavior" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="PROP_BehavioralSimTop" xil_pn:value="" xil_pn:valueState="default"/>
     <property xil_pn:name="PROP_DesignName" xil_pn:value="uart2bus" xil_pn:valueState="non-default"/>
     <property xil_pn:name="PROP_DevFamilyPMName" xil_pn:value="spartan3" xil_pn:valueState="default"/>
     <property xil_pn:name="PROP_PartitionCreateDelete" xil_pn:value="" xil_pn:valueState="default"/>
@@ -374,8 +359,8 @@
     <property xil_pn:name="PROP_PostParSimTop" xil_pn:value="" xil_pn:valueState="default"/>
     <property xil_pn:name="PROP_PostSynthSimTop" xil_pn:value="" xil_pn:valueState="default"/>
     <property xil_pn:name="PROP_PostXlateSimTop" xil_pn:value="" xil_pn:valueState="default"/>
-    <property xil_pn:name="PROP_intWorkingDirLocWRTProjDir" xil_pn:value="OutSideAbove" xil_pn:valueState="non-default"/>
-    <property xil_pn:name="PROP_intWorkingDirUsed" xil_pn:value="Yes" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="PROP_intWorkingDirLocWRTProjDir" xil_pn:value="Same" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="PROP_intWorkingDirUsed" xil_pn:value="No" xil_pn:valueState="non-default"/>
   </properties>
 
   <bindings/>
