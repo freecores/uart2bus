@@ -137,6 +137,8 @@ wire	[7:0]	int_wr_data;	// write data to register file
 wire			int_write;		// write control to register file 
 wire			int_read;		// read control to register file 
 wire	[7:0]	int_rd_data;	// data read from register file 
+wire			int_req;		// bus access request signal 
+wire			int_gnt;		// bus access grant signal 
 wire			ser_in;			// DUT serial input 
 wire			ser_out;		// DUT serial output 
 
@@ -146,8 +148,11 @@ uart2bus_top uart2bus1
 	.clock(clock), .reset(reset),
 	.ser_in(ser_in), .ser_out(ser_out),
 	.int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write),
-	.int_rd_data(int_rd_data), .int_read(int_read)
+	.int_rd_data(int_rd_data), .int_read(int_read), 
+	.int_req(int_req), .int_gnt(int_gnt) 
 );
+// bus grant is always active 
+assign int_gnt = 1'b1;
 
 // serial interface to test bench 
 assign ser_in = serial_out;

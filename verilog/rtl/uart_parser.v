@@ -12,7 +12,8 @@ module uart_parser
 	tx_data, new_tx_data, tx_busy, 
 	// internal bus to register file 
 	int_address, int_wr_data, int_write,
-	int_rd_data, int_read 
+	int_rd_data, int_read, 
+	int_req, int_gnt 
 );
 //---------------------------------------------------------------------------------------
 // parameters 
@@ -32,13 +33,15 @@ output	[7:0]	int_wr_data;	// write data to register file
 output			int_write;		// write control to register file 
 output			int_read;		// read control to register file 
 input	[7:0]	int_rd_data;	// data read from register file 
+output			int_req;		// bus access request signal 
+input			int_gnt;		// bus access grant signal 
 
 // registered outputs
 reg	[7:0] tx_data;
 reg new_tx_data;
 reg	[AW-1:0] int_address;
 reg	[7:0] int_wr_data;
-reg int_write, int_read;
+reg write_req, read_req, int_write, int_read;
 
 // internal constants 
 // define characters used by the parser 
@@ -403,19 +406,26 @@ always @ (posedge clock or posedge reset)
 begin 
 	if (reset)
 	begin 
+		write_req <= 1'b0;
 		int_write <= 1'b0;
 		int_wr_data <= 0;
 	end 
 	else if (write_op && (main_sm == `MAIN_ADDR) && new_rx_data && !data_in_hex_range)
 	begin 
-		int_write <= 1'b1;
+		write_req <= 1'b1;
 		int_wr_data <= data_param;
 	end 
 	// binary extension mode 
 	else if (bin_write_op && (main_sm == `MAIN_BIN_DATA) && new_rx_data) 
 	begin 
-		int_write <= 1'b1;
+		write_req <= 1'b1;
 		int_wr_data <= rx_data;
+	end 
+	else if (int_gnt && write_req) 
+	begin 
+		// set internal bus write and clear the write request flag 
+		int_write <= 1'b1;
+		write_req <= 1'b0;
 	end 
 	else 
 		int_write <= 1'b0;
@@ -425,20 +435,32 @@ end
 always @ (posedge clock or posedge reset)
 begin 
 	if (reset)
+	begin 
 		int_read <= 1'b0;
+		read_req <= 1'b0;
+	end 
 	else if (read_op && (main_sm == `MAIN_ADDR) && new_rx_data && !data_in_hex_range)
-		int_read <= 1'b1;
+		read_req <= 1'b1;
 	// binary extension 
 	else if (bin_read_op && (main_sm == `MAIN_BIN_LEN) && new_rx_data)
 		// the first read request is issued on reception of the length byte 
-		int_read <= 1'b1;
+		read_req <= 1'b1;
 	else if (bin_read_op && tx_end_p && !bin_last_byte)
 		// the next read requests are issued after the previous read value was transmitted and 
 		// this is not the last byte to be read.
+		read_req <= 1'b1;
+	else if (int_gnt && read_req) 
+	begin 
+		// set internal bus read and clear the read request flag 
 		int_read <= 1'b1;
+		read_req <= 1'b0;
+	end 
 	else 
 		int_read <= 1'b0;
 end 
+
+// external request signal is active on read or write request 
+assign int_req = write_req | read_req;
 
 // internal address 
 always @ (posedge clock or posedge reset)
@@ -453,7 +475,6 @@ begin
 		int_address <= addr_param[AW-1:0];
 	else if (addr_auto_inc && 
 			 ((bin_read_op && tx_end_p && !bin_last_byte) || 
-//			  (bin_write_op && (main_sm == `MAIN_BIN_DATA) && new_rx_data)))
 			  (bin_write_op && int_write)))
 		// address is incremented on every read or write if enabled 
 		int_address <= int_address + 1;

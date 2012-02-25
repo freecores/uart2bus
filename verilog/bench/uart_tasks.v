@@ -238,7 +238,6 @@ begin
  					if (serial_in != 1)
  						get_serial_status = get_serial_status | `RECEIVE_RESULT_BADSTOP;
  				end
- 			#(bit_time/2);
  		end
 	end
 end

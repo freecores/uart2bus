@@ -11,7 +11,8 @@ module uart2bus_top
 	ser_in, ser_out,
 	// internal bus to register file 
 	int_address, int_wr_data, int_write,
-	int_rd_data, int_read 
+	int_rd_data, int_read, 
+	int_req, int_gnt 
 );
 //---------------------------------------------------------------------------------------
 // modules inputs and outputs 
@@ -24,6 +25,8 @@ output	[7:0]	int_wr_data;	// write data to register file
 output			int_write;		// write control to register file 
 output			int_read;		// read control to register file 
 input	[7:0]	int_rd_data;	// data read from register file 
+output			int_req;		// bus access request signal 
+input			int_gnt;		// bus access grant signal 
 
 // baud rate configuration, see baud_gen.v for more details.
 // baud rate generator parameters for 115200 baud on 40MHz clock 
@@ -70,7 +73,8 @@ uart_parser #(16) uart_parser1
 	.rx_data(rx_data), .new_rx_data(new_rx_data), 
 	.tx_data(tx_data), .new_tx_data(new_tx_data), .tx_busy(tx_busy), 
 	.int_address(int_address), .int_wr_data(int_wr_data), .int_write(int_write),
-	.int_rd_data(int_rd_data), .int_read(int_read)
+	.int_rd_data(int_rd_data), .int_read(int_read), 
+	.int_req(int_req), .int_gnt(int_gnt) 
 );
 
 endmodule

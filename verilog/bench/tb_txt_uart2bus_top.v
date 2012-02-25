@@ -55,10 +55,6 @@ begin
 	#100;
 	send_serial (8'h20, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
 	#100;
-	send_serial (8'h34, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
-	#100;
-	send_serial (8'h63, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
-	#100;
 	send_serial (8'h64, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
 	#100;
 	send_serial (8'h39, `BAUD_115200, `PARITY_EVEN, `PARITY_OFF, `NSTOPS_1, `NBITS_8, 0);
@@ -136,6 +132,8 @@ wire	[7:0]	int_wr_data;	// write data to register file
 wire			int_write;		// write control to register file 
 wire			int_read;		// read control to register file 
 wire	[7:0]	int_rd_data;	// data read from register file 
+wire			int_req;		// bus access request signal 
+wire			int_gnt;		// bus access grant signal 
 wire			ser_in;			// DUT serial input 
 wire			ser_out;		// DUT serial output 
 
@@ -150,8 +148,12 @@ uart2bus_top uart2bus1
 	.int_wr_data(int_wr_data), 
 	.int_write(int_write),
 	.int_rd_data(int_rd_data), 
-	.int_read(int_read)
+	.int_read(int_read), 
+	.int_req(int_req), 
+	.int_gnt(int_gnt) 
 );
+// bus grant is always active 
+assign int_gnt = 1'b1;
 
 // serial interface to test bench 
 assign ser_in = serial_out;
